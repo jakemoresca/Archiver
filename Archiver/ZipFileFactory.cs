@@ -1,4 +1,5 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -8,6 +9,7 @@ namespace Archiver
     public class ZipFileFactory : IZipFileFactory
     {
         private readonly IArchiverSettingService _archiverSettingService;
+        private static readonly ILog log = LogManager.GetLogger(typeof(ProgramStarter));
 
         public ZipFileFactory(IArchiverSettingService archiverSettingService)
         {
@@ -46,7 +48,9 @@ namespace Archiver
             }
             catch(Exception ex)
             {
-                Console.WriteLine(string.Format("Cannot delete archive. Reason: {0}", ex.Message));
+                var error = string.Format("Cannot delete archive. Reason: {0}", ex.Message);
+                log.Error(error);
+                Console.WriteLine(error);
             }
         }
 
@@ -56,10 +60,13 @@ namespace Archiver
             {
                 Console.WriteLine(string.Format("Trying to add file: {0}", fileName));
                 archive.CreateEntryFromFile(fileName, Path.GetFileName(fileName), CompressionLevel.Optimal);
+                log.Info(string.Format("Added file: {0}", fileName));
             }
             catch(Exception ex)
             {
-                Console.WriteLine(string.Format("Cannot add file to archive. Reason: {0}", ex.Message));
+                var error = string.Format("Cannot add file to archive. Reason: {0}", ex.Message);
+                log.Error(error);
+                Console.WriteLine(error);
             }
         }
     }
